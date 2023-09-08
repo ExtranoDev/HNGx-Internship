@@ -9,16 +9,17 @@ app.get("/", (req, res) => {
 app.get("/api", (req, res) => {
     const { slack_name, track } = req.query
     const date = new Date()
+
     const dayList = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
     if(slack_name && track) {
         const queryResponse = {
             "slack_name": slack_name,
             "current_day": dayList[date.getDay()],
-            "utc_time": date.toJSON(),
+            "utc_time": date.toISOString().split('.')[0]+"Z",
             "track": track,
-            "github_file_url": __filename,
-            "github_repo_url": __dirname,
+            "github_file_url": "https://github.com/ExtranoDev/HNGx-Internship/blob/main/app.js",
+            "github_repo_url": "https://github.com/ExtranoDev/HNGx-Internship",
             "status_code": 200
         }
         return res.status(200).json(queryResponse)
