@@ -38,7 +38,8 @@ $ npm start
 ```
 
 ---
-
+### UML Diagram
+![API UML Diagram](https://github.com/ExtranoDev/HNGx-Internship/blob/main/HNGx1.jpg)
 ### Endpoints 
 
 #### User Service
