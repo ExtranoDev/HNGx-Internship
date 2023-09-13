@@ -11,12 +11,6 @@ const caseConverter = (name) => {
         .join(' ')
 }
 
-// Space in parameters should be replaced with '-'
-// function converts api paramter to a format db will understand
-const paramParser = (name) => {
-    return name.split('-').join(' ')
-}
-
 // function creates a person
 const createPerson = async (req, res) => {
     try {
@@ -55,19 +49,13 @@ const createPerson = async (req, res) => {
 // function returns a person object
 const getPerson = async (req, res) => {
     try {
-        const { userID: personName } = req.params
-        let newName = ""
-        if (personName.includes('-')) {
-            newName = caseConverter(paramParser(personName)) // parses user input
-        } else {
-            newName = personName
-        }
+        const { userID: personID } = req.params
 
         // finds a new person
-        const person = await Person.findOne({ name: newName })
+        const person = await Person.findOne({ _id: personID })
         if (!person) {
             return res.status(404).json({
-                msg: `No Person with name ${newName} can be found!!!`,
+                msg: `No Person with ID ${personID} can be found!!!`,
                 status: "Failed"
             })
         }
@@ -75,7 +63,7 @@ const getPerson = async (req, res) => {
         // display in case of success when finding user
         res.status(200).json({
             person,
-            msg: `Person ${newName} Found`,
+            msg: `Person ${person.name} Found`,
             status: "Success"
         })
     } catch (error) {
@@ -86,20 +74,12 @@ const getPerson = async (req, res) => {
 // function upates a person object
 const updatePerson = async (req, res) => {
     try {
-        const { userID: personName } = req.params
+        const { userID: personID } = req.params
         const newPersonName = req.body
-        let newName = ""
-        if (personName.includes('-')) {
-            // parses user input
-            newName = caseConverter(paramParser(personName))
-            newPersonName.name = caseConverter(paramParser(newPersonName.name))
-        } else {
-            newName = personName
-        }
 
         // finds a new person and upadtes
         const person = await Person.findOneAndUpdate(
-            { name: newName },
+            { _id: personID },
             newPersonName,
             {
                 new: true,
@@ -108,14 +88,14 @@ const updatePerson = async (req, res) => {
         )
         if (!person) {
             return res.status(404).json({
-                msg: `No Person with name ${newName} can be found!!!`,
+                msg: `No Person with ID ${personID} can be found!!!`,
                 status: "Update Failed"
             })
         }
 
         // display in case of success when finding user
         res.status(200).json({
-            msg: `Person ${newName} updated`,
+            msg: `Person ${personID} updated`,
             newDetails: person,
             status: "Success"
         })
@@ -127,26 +107,20 @@ const updatePerson = async (req, res) => {
 // function deletes a person object
 const deletePerson = async (req, res) => {
     try {
-        const { userID: personName } = req.params
-        let newName = ""
-        if (personName.includes('-')) {
-            newName = caseConverter(paramParser(personName)) //parses input
-        } else {
-            newName = personName
-        }
+        const { userID: personID } = req.params
 
         // finds a new person and delete
-        const person = await Person.findOneAndDelete({ name: newName })
+        const person = await Person.findOneAndDelete({ _id: personID })
         if (!person) {
             return res.status(404).json({
-                msg: `No Person with name: ${newName}`,
+                msg: `No Person with id: ${personID}`,
                 status: "Removal Failed"
             })
         }
 
         // display in case of success when finding user
         res.status(200).json({
-            msg: `${newName} deleted`,
+            msg: `${person.name} with id ${personID} deleted`,
             status: "Success"
         })
     } catch (error) {
