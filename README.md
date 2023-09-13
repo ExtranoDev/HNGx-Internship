@@ -46,7 +46,7 @@ $ npm start
 
 |HTTP Method|URL|Description|
 |---|---|---|
-|`POST`|#/api | Create new Person |
-|`PATCH`|#/api/{userID} | Update Person by name ID |
-|`GET`|#/api/{userId} | Get Person by name ID |
-|`DELETE`|#/api/{userId} | Delete Person by name ID |
+|`POST`|https://extranodev.onrender.com/api | Create new Person |
+|`PATCH`|https://extranodev.onrender.com/api/{userID} | Update Person by name ID |
+|`GET`|https://extranodev.onrender.com/api/{userId} | Get Person by name ID |
+|`DELETE`|https://extranodev.onrender.com/api/{userId} | Delete Person by name ID |

@@ -11,10 +11,6 @@ const caseConverter = (name) => {
         .join(' ')
 }
 
-const convertToString = (name) => {
-    return name.toString()
-}
-
 // Space in parameters should be replaced with '-'
 // function converts api paramter to a format db will understand
 const paramParser = (name) => {
@@ -61,7 +57,6 @@ const getPerson = async (req, res) => {
     try {
         const { userID: personName } = req.params
         let newName = ""
-        personName = convertToString(personName)
         if (personName.includes('-')) {
             newName = caseConverter(paramParser(personName)) // parses user input
         } else {
@@ -94,8 +89,6 @@ const updatePerson = async (req, res) => {
         const { userID: personName } = req.params
         const newPersonName = req.body
         let newName = ""
-        personName = convertToString(personName)
-        newPersonName.name = convertToString(newPersonName.name)
         if (personName.includes('-')) {
             // parses user input
             newName = caseConverter(paramParser(personName))
@@ -136,7 +129,6 @@ const deletePerson = async (req, res) => {
     try {
         const { userID: personName } = req.params
         let newName = ""
-        personName = convertToString(personName)
         if (personName.includes('-')) {
             newName = caseConverter(paramParser(personName)) //parses input
         } else {
@@ -161,6 +153,8 @@ const deletePerson = async (req, res) => {
         res.status(500).json({ msg: error })
     }
 }
+
+
 
 module.exports = {
     createPerson,
