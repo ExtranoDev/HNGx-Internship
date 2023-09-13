@@ -11,6 +11,10 @@ const caseConverter = (name) => {
         .join(' ')
 }
 
+const convertToString = (name) => {
+    return name.toString()
+}
+
 // Space in parameters should be replaced with '-'
 // function converts api paramter to a format db will understand
 const paramParser = (name) => {
@@ -22,10 +26,12 @@ const createPerson = async (req, res) => {
     try {
         const copyName = req.body.name
         let parsedName = ""
-        if (copyName.includes(" ")) {
-            parsedName = caseConverter(copyName) // perses and converts user input
-        } else {
-            parsedName = copyName
+        if (typeof copyName == 'string') {
+            if (copyName.includes(" ")) {
+                parsedName = caseConverter(copyName) // perses and converts user input
+            } else {
+                parsedName = copyName
+            }
         }
 
         // creates a new person
@@ -55,6 +61,7 @@ const getPerson = async (req, res) => {
     try {
         const { userID: personName } = req.params
         let newName = ""
+        personName = convertToString(personName)
         if (personName.includes('-')) {
             newName = caseConverter(paramParser(personName)) // parses user input
         } else {
@@ -87,6 +94,8 @@ const updatePerson = async (req, res) => {
         const { userID: personName } = req.params
         const newPersonName = req.body
         let newName = ""
+        personName = convertToString(personName)
+        newPersonName.name = convertToString(newPersonName.name)
         if (personName.includes('-')) {
             // parses user input
             newName = caseConverter(paramParser(personName))
@@ -127,6 +136,7 @@ const deletePerson = async (req, res) => {
     try {
         const { userID: personName } = req.params
         let newName = ""
+        personName = convertToString(personName)
         if (personName.includes('-')) {
             newName = caseConverter(paramParser(personName)) //parses input
         } else {
@@ -151,8 +161,6 @@ const deletePerson = async (req, res) => {
         res.status(500).json({ msg: error })
     }
 }
-
-
 
 module.exports = {
     createPerson,
