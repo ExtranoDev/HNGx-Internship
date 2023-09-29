@@ -1,31 +1,21 @@
-const express = require('express')
+const express = require("express")
+const notFoundMiddleware = require('./middleware/not-found')
+const errorHandleMiddleware = require('./middleware/error-handler')
+const videoRouter = require('./routes/videoRoute')
 const app = express()
-const person = require('./Routes/person')
-const connectDB = require('./db/connect')
-require('dotenv').config()
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 3000; // Port definition
 
-// middleware
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.status(200).send('At Home')
+app.use('/saveVideo', videoRouter)
+app.use('/', (req, res) => {
+    res.status(200).send('Video API')
 })
 
-app.use('/api', person)
+app.use(notFoundMiddleware)
+app.use(errorHandleMiddleware)
 
-
-const initiate = async () => {
-    try {
-        await connectDB(process.env.DB_URI)
-        app.listen(PORT, (req, res) => {
-            console.log(`Server is listening on port ${PORT}...`)
-        })
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-initiate()
-
+app.listen(PORT, (req, res) => {
+    console.log(`Server listening on PORT: ${PORT}...`)
+})
