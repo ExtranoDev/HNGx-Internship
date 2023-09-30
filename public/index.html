@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Video Recorder</title>
+    <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+</head>
+
+<body>
+
+    <video id="video" width="640" height="480" autoplay></video>
+    <button onclick="startRecording()">Start</button>
+    <button onclick="pauseRecording()">Pause</button>
+    <button onclick="resumeRecording()">Resume</button>
+    <button onclick="stopRecording()">Stop</button>
+
+    <script>
+        let recorder;
+
+        async function startRecording() {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                timeslice: 10000
+            });
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+
+            recorder = RecordRTC(stream, { type: 'video', mimeType: 'video/webm' });
+            recorder.startRecording();
+            fetch('/api/video/start', { method: 'POST' });
+        }
+
+        function pauseRecording() {
+            recorder.pauseRecording();
+            fetch('/api/video/pause', { method: 'POST' });
+        }
+
+        function resumeRecording() {
+            recorder.resumeRecording();
+            fetch('/api/video/resume', { method: 'POST' });
+        }
+
+        function stopRecording() {
+            recorder.stopRecording(async () => {
+                let blob = recorder.getBlob();
+                const data = new FormData();
+                data.append('file', blob);
+
+                fetch('/api/video/stop', { method: 'POST', body: data });
+            });
+        }
+    </script>
+
+</body>
+
+</html>

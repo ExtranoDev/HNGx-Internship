@@ -9,13 +9,16 @@ let videoChunks = []
 let videoID
 const deepgram = new Deepgram(process.env.DEEP_KEY)
 
-const saveChunckVideo = async () => {
-    const { data } = req.body
-    console.log(data)
-    await videoChunks.push(Buffer.concat([data]))
+const saveChunckVideo = async (req, res) => {
+    let chunk = []
+
+    await req.on('data', (data) => {
+        chunk.push(data)
+        videoChunks.push(Buffer.concat(chunk))
+    })
 }
 
-const startVideo = async (req, res) => {
+const startVideo = (req, res) => {
     videoChunks = [] // clears previous video
     // await recorder.startRecording()
     videoID = Math.floor(Math.random() * 9000000000) + 1000000000 //generated video ID
@@ -26,13 +29,12 @@ const pauseVideo = async (req, res) => {
     // await recorder.pauseRecording(async () => {
     //     const blob = recorder.getBlob()
     // })
-
-    saveChunckVideo()
+    await saveChunckVideo(req, res)
     res.status(200).json({ "msg": "Video paused", videoID })
 }
 
 
-const resumeVideo = async (req, res) => {
+const resumeVideo = (req, res) => {
     // await recorder.resumeRecording()
     res.status(200).json({ "msg": "Video resumed", videoID })
 }
@@ -46,15 +48,16 @@ const stopVideo = async (req, res) => {
     //     fs.writeFileSync(videoPath, videoBuffer)
     // })
 
-    saveChunckVideo()
-    const videoBuffer = await Buffer.concat(videoChunks)
-    const videoPath = await path.join(__dirname, 'videos', `${videoID}.webm`)
-    await fs.writeFileSync(videoPath, videoBuffer)
+    await saveChunckVideo(req, res)
+    const videoBuffer = Buffer.concat(videoChunks)
+    const videoPath = path.join(__dirname, 'videos', `${videoID}.webm`)
+
+    fs.writeFileSync(videoPath, videoBuffer)
     videoChunks = []
     res.status(200).json({ "msg": "Video stopped", videoID })
 }
 
-const getVideo = async () => {
+const getVideo = async (req, res) => {
     const { id } = req.body
 
     filePath = path.join(__dirname, `videos/${id}.webm`)
