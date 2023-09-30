@@ -57,7 +57,22 @@ const stopVideo = async (req, res) => {
 const getVideo = async () => {
     const { id } = req.body
 
-    filePath = `../videos/${id}.webm`
+    filePath = path.join(__dirname, `videos/${id}.webm`)
+    const videoSize = fs.statSync(filePath).size
+    const chunkSize = 1 * 1e6;
+    const start = Number(range.replace(/\D/g, ""))
+    const end = Math.min(start + chunkSize, videoSize - 1)
+    const videoLength = end - start + 1;
+
+    const headers = {
+        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": videoLength,
+        "Content-Type": "video/webm"
+    }
+    res.writeHead(206, headers)
+    const stream = fs.createReadStream(filePath, { start, end })
+
 
     ffmpegStatic(`-hide_banner -y -i ${filePath} ${filePath}.wav`)
 
@@ -71,9 +86,12 @@ const getVideo = async () => {
     })
 
     res.json({
-        "status": 'Video recovered', "filePath": `/videos/${id}.webm`,
+        "status": 'Video acced',
+        "videoPath": `/videos/${id}.webm`,
         "transcription": transData.results
     })
+
+    stream.pipe(res)
 }
 
 
