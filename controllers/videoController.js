@@ -9,8 +9,9 @@ let videoChunks = []
 let videoID
 const deepgram = new Deepgram(process.env.DEEP_KEY)
 
-const saveChunk = async () => {
+const saveChunckVideo = async () => {
     const { data } = req.body
+    console.log(data)
     await videoChunks.push(Buffer.concat([data]))
 }
 
@@ -26,7 +27,7 @@ const pauseVideo = async (req, res) => {
     //     const blob = recorder.getBlob()
     // })
 
-    saveChunk()
+    saveChunckVideo()
     res.status(200).json({ "msg": "Video paused", videoID })
 }
 
@@ -45,7 +46,7 @@ const stopVideo = async (req, res) => {
     //     fs.writeFileSync(videoPath, videoBuffer)
     // })
 
-    saveChunk()
+    saveChunckVideo()
     const videoBuffer = await Buffer.concat(videoChunks)
     const videoPath = await path.join(__dirname, 'videos', `${videoID}.webm`)
     await fs.writeFileSync(videoPath, videoBuffer)
@@ -81,5 +82,6 @@ module.exports = {
     pauseVideo,
     resumeVideo,
     stopVideo,
-    getVideo
+    getVideo,
+    saveChunckVideo
 }

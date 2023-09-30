@@ -6,9 +6,11 @@ const {
     pauseVideo,
     resumeVideo,
     stopVideo,
-    getVideo
+    getVideo,
+    saveChunckVideo
 } = require('../controllers/videoController')
 
+router.post('/save', saveChunckVideo)
 router.post('/start', startVideo)
 router.post('/pause', pauseVideo)
 router.post('/resume', resumeVideo)
