@@ -75,7 +75,7 @@ const resumeVideo = (req, res) => {
 
 const stopVideo = async (req, res) => {
     await saveChunckVideo(req, res, sta = false)
-    await uploadAll()
+    await uploadAll(req, res)
 }
 
 const getTranscribe = async (folderPath, id) => {
