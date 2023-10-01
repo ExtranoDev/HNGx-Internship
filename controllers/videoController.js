@@ -78,6 +78,7 @@ const stopVideo = async (req, res) => {
         videoChunks = []
 
         await getTranscribe(folderPath, videoID)
+        console.log(videoID)
         res.status(200).json({ "msg": "Video stopped", videoID })
     } catch (error) {
         throw new BadRequestError("Unable to stop video an error occured")
@@ -122,8 +123,9 @@ const getVideo = async (req, res) => {
         const { id } = req.params
         const range = req.headers.range
         folderPath = path.join(__dirname, `videos/${id}`)
-        filePath = folderPath + '.mp4'
+        filePath = folderPath + '.webm'
 
+        console.log(filePath)
         const videoSize = fs.statSync(filePath).size
         const chunkSize = 1 * 1e6;
         const start = Number(range.replace(/\D/g, ""))
@@ -134,7 +136,7 @@ const getVideo = async (req, res) => {
             "Content-Range": `bytes ${start}-${end}/${videoSize}`,
             "Accept-Ranges": "bytes",
             "Content-Length": videoLength,
-            "Content-Type": "video/mp4"
+            "Content-Type": "video/webm"
         }
         res.writeHead(206, headers)
         const stream = await fs.createReadStream(filePath, { start, end })
@@ -146,8 +148,8 @@ const getVideo = async (req, res) => {
         // })
 
         stream.pipe(res)
-    } catch (NotFoundError) {
-        throw new NotFoundError("Can't find the ID'ied video")
+    } catch (error) {
+        throw new NotFoundError("Cannot find ID'ed file")
     }
 }
 
