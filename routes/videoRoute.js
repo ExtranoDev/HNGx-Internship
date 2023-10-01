@@ -13,11 +13,13 @@ const {
     stopVideo,
     getVideo,
     saveChunckVideo,
-    getSRTFile
+    getSRTFile,
+    uploadAll
 } = require('../controllers/videoController')
 
 router.post('/save', upload.single('file'), saveChunckVideo)
 router.post('/start', startVideo)
+router.post('/upload', uploadAll)
 router.post('/pause', pauseVideo)
 router.post('/resume', resumeVideo)
 router.post('/stop', upload.single('file'), stopVideo)

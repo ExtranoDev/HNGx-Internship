@@ -66,17 +66,7 @@ const resumeVideo = (req, res) => {
 
 const stopVideo = async (req, res) => {
     await saveChunckVideo(req, res)
-    const videoBuffer = await Buffer.concat(videoChunks)
-    const folderPath = path.join(__dirname, 'videos', `${videoID}`)
-
-    const videoPath = folderPath + '.webm'
-
-    await fs.writeFileSync(videoPath, videoBuffer)
-    videoChunks = []
-
-    await getTranscribe(folderPath, videoID)
-    console.log(videoID)
-    res.status(200).json({ "msg": "Video stopped", videoID })
+    await uploadAll()
 }
 
 const getTranscribe = async (folderPath, id) => {
@@ -145,6 +135,19 @@ const getVideo = async (req, res) => {
     }
 }
 
+const uploadAll = async (req, res) => {
+    const videoBuffer = await Buffer.concat(videoChunks)
+    const folderPath = path.join(__dirname, 'videos', `${videoID}`)
+
+    const videoPath = folderPath + '.webm'
+
+    await fs.writeFileSync(videoPath, videoBuffer)
+    videoChunks = []
+    await getTranscribe(folderPath, videoID)
+    console.log(videoID)
+    res.status(200).json({ "msg": "Video Upload successfully", videoID })
+}
+
 const getSRTFile = (req, res) => {
     const { id } = req.params
     res.status(200).sendFile(path.resolve(__dirname, `./videos/${id}.srt`))
@@ -157,5 +160,6 @@ module.exports = {
     stopVideo,
     getVideo,
     saveChunckVideo,
-    getSRTFile
+    getSRTFile,
+    uploadAll
 }
