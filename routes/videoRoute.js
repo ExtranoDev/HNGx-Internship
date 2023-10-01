@@ -18,7 +18,7 @@ const {
 } = require('../controllers/videoController')
 
 router.post('/save', upload.single('file'), saveChunckVideo)
-router.post('/start', startVideo)
+router.get('/start', startVideo)
 router.post('/upload', uploadAll)
 router.post('/pause', pauseVideo)
 router.post('/resume', resumeVideo)

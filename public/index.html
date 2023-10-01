@@ -29,7 +29,7 @@
 
             recorder = RecordRTC(stream, { type: 'video', mimeType: 'video/webm' });
             recorder.startRecording();
-            fetch('/api/video/start', { method: 'POST' });
+            await fetch('/api/video/start', { method: 'GET' });
         }
 
         function pauseRecording() {

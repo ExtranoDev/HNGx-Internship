@@ -10,7 +10,7 @@ const { BadRequestError, NotFoundError } = require('../errors');
 let videoChunks = []
 let videoID
 const deepgram = new Deepgram(process.env.DEEP_KEY)
-const count = 1
+let count = 1
 
 
 const convert2audio = (videoPath, outputPath) => {
@@ -47,7 +47,7 @@ const saveChunckVideo = async (req, res, sta = true) => {
     }
 }
 
-const startVideo = (req, res) => {
+const startVideo = async (req, res) => {
     try {
         videoChunks = [] // clears previous video
         count = 1
@@ -157,9 +157,15 @@ const uploadAll = async (req, res) => {
     res.status(200).json({ "msg": "Video Upload successfully", videoID })
 }
 
-const getSRTFile = (req, res) => {
+const getSRTFile = async (req, res) => {
     const { id } = req.params
-    res.status(200).sendFile(path.resolve(__dirname, `./videos/${id}.srt`))
+    await fs.readFile(path.resolve(__dirname, `./videos/${id}.srt`), "utf8", (err, data) => {
+        if (err) {
+            throw new NotFoundError("File cannot be found")
+        }
+
+        res.status(200).send(data)
+    })
 }
 
 module.exports = {
