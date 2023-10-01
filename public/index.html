@@ -14,13 +14,15 @@
     <button onclick="resumeRecording()">Resume</button>
     <button onclick="stopRecording()">Stop</button>
 
+    <a href="show-vid.html">Show Video</a>
+
     <script>
         let recorder;
 
         async function startRecording() {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
-                timeslice: 10000
+                audio: true
             });
             const video = document.getElementById('video');
             video.srcObject = stream;
@@ -31,9 +33,17 @@
         }
 
         function pauseRecording() {
-            recorder.pauseRecording();
-            fetch('/api/video/pause', { method: 'POST' });
+            recorder.pauseRecording(async () => {
+                let blob = await recorder.getBlob();
+                const data = new FormData();
+                await data.append('file', blob);
+
+                fetch('/api/video/stop', { method: 'POST', body: data });
+            });
         }
+        //     recorder.pauseRecording();
+        //     fetch('/api/video/pause', { method: 'POST' });
+        // }
 
         function resumeRecording() {
             recorder.resumeRecording();
@@ -42,11 +52,11 @@
 
         function stopRecording() {
             recorder.stopRecording(async () => {
-                let blob = recorder.getBlob();
+                let blob = await recorder.getBlob();
                 const data = new FormData();
-                data.append('file', blob);
+                await data.append('file', blob);
 
-                fetch('/api/video/stop', { method: 'POST', body: data });
+                await fetch('/api/video/stop', { method: 'POST', body: data });
             });
         }
     </script>
