@@ -37,7 +37,6 @@ const saveChunckVideo = async (req, res) => {
     } catch (error) {
         throw new BadRequestError("Invalid Blob file")
     }
-
 }
 
 const startVideo = (req, res) => {
@@ -66,24 +65,18 @@ const resumeVideo = (req, res) => {
 }
 
 const stopVideo = async (req, res) => {
-    try {
-        await saveChunckVideo(req, res)
-        const videoBuffer = await Buffer.concat(videoChunks)
-        const folderPath = path.join(__dirname, 'videos', `${videoID}`)
-        console.log(folderPath)
+    await saveChunckVideo(req, res)
+    const videoBuffer = await Buffer.concat(videoChunks)
+    const folderPath = path.join(__dirname, 'videos', `${videoID}`)
 
-        const videoPath = folderPath + '.webm'
+    const videoPath = folderPath + '.webm'
 
-        await fs.writeFileSync(videoPath, videoBuffer)
-        videoChunks = []
+    await fs.writeFileSync(videoPath, videoBuffer)
+    videoChunks = []
 
-        await getTranscribe(folderPath, videoID)
-        console.log(videoID)
-        res.status(200).json({ "msg": "Video stopped", videoID })
-    } catch (error) {
-        throw new BadRequestError("Unable to stop video an error occured")
-    }
-
+    await getTranscribe(folderPath, videoID)
+    console.log(videoID)
+    res.status(200).json({ "msg": "Video stopped", videoID })
 }
 
 const getTranscribe = async (folderPath, id) => {
@@ -125,7 +118,6 @@ const getVideo = async (req, res) => {
         folderPath = path.join(__dirname, `videos/${id}`)
         filePath = folderPath + '.webm'
 
-        console.log(filePath)
         const videoSize = fs.statSync(filePath).size
         const chunkSize = 1 * 1e6;
         const start = Number(range.replace(/\D/g, ""))
@@ -153,11 +145,17 @@ const getVideo = async (req, res) => {
     }
 }
 
+const getSRTFile = (req, res) => {
+    const { id } = req.params
+    res.status(200).sendFile(path.resolve(__dirname, `./videos/${id}.srt`))
+}
+
 module.exports = {
     startVideo,
     pauseVideo,
     resumeVideo,
     stopVideo,
     getVideo,
-    saveChunckVideo
+    saveChunckVideo,
+    getSRTFile
 }
