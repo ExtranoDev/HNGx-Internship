@@ -10,6 +10,7 @@ const { BadRequestError, NotFoundError } = require('../errors');
 let videoChunks = []
 let videoID
 const deepgram = new Deepgram(process.env.DEEP_KEY)
+const count = 1
 
 
 const convert2audio = (videoPath, outputPath) => {
@@ -30,10 +31,17 @@ const convert2audio = (videoPath, outputPath) => {
     });
 }
 
-const saveChunckVideo = async (req, res) => {
+const saveChunckVideo = async (req, res, sta = true) => {
     try {
         const fileData = req.file
         await videoChunks.push(fileData.buffer)
+        if (sta) {
+            res.status(201).json({
+                "msg": `${count} Chunk collected`,
+                videoID
+            })
+            count++
+        }
     } catch (error) {
         throw new BadRequestError("Invalid Blob file")
     }
@@ -42,6 +50,7 @@ const saveChunckVideo = async (req, res) => {
 const startVideo = (req, res) => {
     try {
         videoChunks = [] // clears previous video
+        count = 1
         // await recorder.startRecording()
         videoID = Math.floor(Math.random() * 9000000000) + 1000000000 //generated video ID
         res.status(200).json({ "msg": "Video begins", videoID })
@@ -65,7 +74,7 @@ const resumeVideo = (req, res) => {
 }
 
 const stopVideo = async (req, res) => {
-    await saveChunckVideo(req, res)
+    await saveChunckVideo(req, res, sta = false)
     await uploadAll()
 }
 
