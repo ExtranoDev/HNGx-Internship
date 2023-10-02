@@ -62,7 +62,7 @@ const startVideo = async (req, res) => {
 
 const pauseVideo = async (req, res) => {
     try {
-        await saveChunckVideo(req, res)
+        await saveChunckVideo(req, res, sta = false)
         res.status(200).json({ "msg": "Video paused", videoID })
     } catch (error) {
         throw new BadRequestError("Unable to pause video")
@@ -163,7 +163,6 @@ const getSRTFile = async (req, res) => {
         if (err) {
             throw new NotFoundError("File cannot be found")
         }
-
         res.status(200).send(data)
     })
 }
