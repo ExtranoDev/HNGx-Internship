@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  title: Video-API
+  contact: {}
+  version: "1.0"
+servers:
+  - url: https://chrome-extenion.onrender.com/api/video
+    variables: {}
+paths:
+  /save:
+    post:
+      tags:
+        - Video
+      summary: Save Chunk
+      description: Gets a chuck of video and saves it in the saver
+      operationId: SaveChunk
+      parameters: []
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  description: a blob file type
+                  format: binary
+        required: false
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /start:
+    get:
+      tags:
+        - Video
+      summary: Start Video
+      description: Starts the video recording process and it returns the videoID for the video been recorded
+      operationId: StartVideo
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /upload:
+    post:
+      tags:
+        - Video
+      summary: Upload video
+      description: Endpoint compiles the recorded video, terminates and the recording session and returns the video ID
+      operationId: Uploadvideo
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /srt/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The video's ID
+    get:
+      tags:
+        - Video
+      summary: Get Transcription
+      description: Returns a file containing the transcribed audio from the uploaded video
+      operationId: GetTranscription
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+  /{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The video's ID
+    get:
+      tags:
+        - Video
+      summary: Stream Video
+      description: Streams video, endpoint must be included in a <video> html tag
+      operationId: StreamVideo
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          headers: {}
+      deprecated: false
+      security: []
+tags:
+  - name: Video
+    description: ""

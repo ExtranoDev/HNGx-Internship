@@ -5,6 +5,13 @@ const cors = require("cors")
 const notFoundMiddleware = require('./middleware/not-found')
 const errorHandleMiddleware = require('./middleware/error-handler')
 const videoRouter = require('./routes/videoRoute')
+
+// Setting up doc
+const swaggerUI = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./swagger.yaml')
+
+
 const app = express()
 
 const PORT = process.env.PORT || 3000; // Port definition
@@ -14,6 +21,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use('/api/video', videoRouter)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 // app.use('/', (req, res) => {
 //     res.status(200).send('Video API Home')
 // })
